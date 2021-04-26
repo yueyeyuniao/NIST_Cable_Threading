@@ -1,0 +1,23 @@
+yolo_model:
+
+  config_file:
+    name: yolov2-voc-NIST.cfg
+  weight_file:
+    name: yolov2-voc-peng_NIST.weights
+  threshold:
+    value: 0.1
+  detection_classes:
+    names:
+      - Flat_cable_clip
+      - Flat_cable_holder
+      - Flat_cable_tube
+      - Flat_cable_tube_side
+      - Thick_cable_clip
+      - Thick_cable_holder
+      - Thick_cable_tube
+      - Thick_cable_tube_side
+      - Thin_cable_clip
+      - Thin_cable_holder
+      - Thin_cable_tube
+      - Thin_cable_tube_side
+      - Washer

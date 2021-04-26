@@ -1,0 +1,13 @@
+yolo_model:
+
+  config_file:
+    name: yolov2-tiny-voc_NIST_board.cfg
+  weight_file:
+    name: yolov2-tiny-voc_NIST_board.weights
+  threshold:
+    value: 0.3
+  detection_classes:
+    names:
+      - tube_1
+      - tube_2
+      - tube_3

@@ -1,0 +1,12 @@
+yolo_model:
+
+  config_file:
+    name: yolov2-voc-NIST.cfg
+  weight_file:
+    name: yolov2-voc-peng_NIST.weights
+  threshold:
+    value: 0.1
+  detection_classes:
+    names:
+      - Thick_cable_tube
+      - Thick_cable_tube_side

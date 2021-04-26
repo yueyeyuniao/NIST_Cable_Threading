@@ -1,0 +1,11 @@
+yolo_model:
+
+  config_file:
+    name: yolov2-tiny-voc_cable_HRI.cfg
+  weight_file:
+    name: yolov2-tiny-voc_cable_HRI.weights
+  threshold:
+    value: 0.5
+  detection_classes:
+    names:
+      - cable

@@ -1,0 +1,11 @@
+yolo_model:
+
+  config_file:
+    name: yolov2-tiny-voc_wire.cfg
+  weight_file:
+    name: yolov2-tiny-voc_wire.weights
+  threshold:
+    value: 0.1
+  detection_classes:
+    names:
+      - wire

@@ -1,0 +1,11 @@
+yolo_model:
+
+  config_file:
+    name: yolov2-tiny-voc_NIST_cable.cfg
+  weight_file:
+    name: yolov2-tiny-voc_NIST_cable.weights
+  threshold:
+    value: 0.3
+  detection_classes:
+    names:
+      - cable
