@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>trajopt_examples</name>
+  <version>0.1.0</version>
+  <description>This package contains examples related to this trajopt_ros repository.</description>
+
+  <maintainer email="levi.armstrong@swri.org">Levi Armstrong</maintainer>
+  <license>Apache 2.0</license>
+  <license>BSD 2-Clause</license>
+  <author >Levi Armstrong</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <build_export_depend>roscpp</build_export_depend>
+  <exec_depend>roscpp</exec_depend>
+  <depend>roslib</depend>
+  <depend>trajopt</depend>
+  <depend>tesseract_ros</depend>
+  <depend>tesseract_planning</depend>
+  <depend>octomap_ros</depend>
+  <depend>pcl_conversions</depend>
+
+  <build_depend>moveit_core</build_depend>
+  <exec_depend>moveit_core</exec_depend>
+
+  <build_depend>moveit_ros_planning_interface</build_depend>
+  <exec_depend>moveit_ros_planning_interface</exec_depend>
+
+  <!-- for srv -->
+  <build_depend>message_generation</build_depend>
+  <exec_depend>message_runtime</exec_depend>
+
+  <build_depend>geometry_msgs</build_depend>
+  <build_export_depend>geometry_msgs</build_export_depend>
+  
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+
+  </export>
+</package>

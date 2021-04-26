@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+
+<robot name="gen3" xmlns:xacro="http://ros.org/wiki/xacro">
+	<link name="world"/> 
+    <!-- Arguments -->
+    <xacro:arg name="arm" default="gen3" />
+    <xacro:arg name="gripper" default="" />
+    <xacro:arg name="sim" default="true" />
+
+<!--     <xacro:include filename="$(find kortex_description)/robots/kortex_robot.xacro" />
+    <xacro:load_robot arm = "gen3" gripper = "" sim="true">        
+    </xacro:load_robot> -->
+
+
+    <xacro:include filename="$(find research)/urdf/gen3_trajopt.xacro" />
+    <xacro:load_arm parent="base_link">
+        <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+    </xacro:load_arm>
+
+    <joint name="world_to_base" type="fixed">
+      <parent link="world"/>
+      <child link="link_0"/>
+      <origin xyz="0 0 0.001" rpy="0 0 0"/>
+    </joint> 
+
+</robot>

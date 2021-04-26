@@ -1,0 +1,32 @@
+<launch>
+    <arg name="rviz" default="true"/>
+    <arg name="steps_per_phase" default="10"/>
+    <arg name="plotting" default="false" />
+    <arg name="file_write_cb" default="false" />
+
+
+    <!-- Load Robot Model    -->
+    <param name="robot_description"  command="$(find xacro)/xacro --inorder $(find research)/urdf/gen3.xacro sim:=true"/>
+
+    <!-- Load Robot Semantic -->
+    <param name="robot_description_semantic" textfile="$(find research)/config/gen3.srdf" />
+
+    <!-- Launch GUI to drive joints   -->
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+
+    <!-- Launch robot state publisher - may need to remap to /iiwa/joints..-->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+
+
+    <!-- Launch planner node -->
+    <node name="gen3_trajopt_node" pkg="trajopt_examples" type="trajopt_examples_gen3_trajopt_node" output="screen">
+        <param name="steps_per_phase" value="$(arg steps_per_phase)"/>
+        <param name="plotting" value="$(arg plotting)"/>
+        <param name="file_write_cb" value="$(arg file_write_cb)" />
+    </node>
+
+    <!-- Launch visualization -->
+    <node if="$(arg rviz)" pkg="rviz" type="rviz" name="pick_and_place_viz"
+        args="-d $(find trajopt_examples)/config/pick_and_place_plan.rviz" />
+
+</launch>

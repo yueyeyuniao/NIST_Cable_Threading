@@ -1,0 +1,12 @@
+int8 region
+---
+float64 grasp_x
+float64 grasp_y
+float64 grasp_z
+float64 grasp_theta
+float64 tip_x
+float64 tip_y
+float64 tip_z
+float64 tip_theta
+float64 length
+bool result

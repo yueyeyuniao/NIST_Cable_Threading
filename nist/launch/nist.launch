@@ -1,0 +1,54 @@
+<launch>
+		
+	<include file="$(find kortex_driver)/launch/kortex_driver.launch" />
+
+	<!-- <include file="$(find realsense2_camera)/launch/rs_rgbd.launch" />  -->
+	<!-- <node pkg="tf" type="static_transform_publisher"        -->
+        <!--	name="map_link_to_camera_top"           -->
+        <!--	args="0.54 0.025 0.63 -1.57 1.57 0.0 /base_link /camera_top_link 100" /> -->
+
+
+	<include file="$(find kinova_vision)/launch/kinova_vision.launch" />
+	<node pkg="tf" type="static_transform_publisher" 
+        	name="bracelet_link_to_camera" 
+        	args="0.0 -0.065 -0.055 3.14 0.0 3.14 /bracelet_link /camera_link 100" />
+	
+
+	<node pkg="tf" type="static_transform_publisher"
+         	name="base_link_to_board" 
+        	args="0.54 0.07 0.01 0.0 0.0 0.0 /base_link /board_center 100" /> 
+
+	<!-- old : 0.54 -0.075 0.01-->
+
+	<node pkg="tf" type="static_transform_publisher" 
+        	name="base_link_to_thick_tube1" 
+        	args="0.495 0.037 0.15 -3.14 3.14 0.0 /base_link /thick_tube1 100" />
+	<node pkg="tf" type="static_transform_publisher" 
+        	name="base_link_to_thick_tube1_pre" 
+        	args="0.495 0.037 0.17 -3.14 3.14 0.0 /base_link /thick_tube1_pre 100" />
+
+	<node pkg="tf" type="static_transform_publisher" 
+        	name="base_link_to_thick_tube2" 
+        	args="0.435 0.040 0.028 1.57 3.14 0.0 /base_link /thick_tube2 100" />
+
+	<node pkg="tf" type="static_transform_publisher"
+        	name="base_link_to_thick_tube3"  
+        	args="0.39 0.095 0.028 0.0 3.14 0.0 /base_link /thick_tube3 100" /> 
+
+	<node pkg="tf" type="static_transform_publisher" 
+        	name="base_link_to_holder" 
+        	args="0.355 0.075 0.055 -3.14 3.14 0.0 /base_link /holder 10" />
+	
+	<node pkg="tf" type="static_transform_publisher" 
+        	name="bracelet_link_to_ee_modeling" 
+        	args="0.0 0.0 -0.055 0.0 0.0 1.57 /bracelet_link /end_effector_default 100" />
+	
+	<node pkg="tf" type="static_transform_publisher" 
+        	name="bracelet_link_to_ee" 
+        	args="0.0 0.0 -0.055 0.0 0.0 3.14 /bracelet_link /end_effector 100" />
+
+	<node pkg="tf" type="static_transform_publisher" 
+        	name="bracelet_link_to_finger" 
+        	args="0.0 0.0 -0.27 0.0 0.0 1.57 /bracelet_link /finger 100" />
+
+</launch>
