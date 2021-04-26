@@ -26,27 +26,27 @@
 
 ## Commands
 #### launch robot and camera
-##### (roslaunch nist nist.launch)
+##### roslaunch nist nist.launch
 #### launch trajopt service node
-##### (roslaunch research gen3_trajopt_node.launch)
+##### roslaunch research gen3_trajopt_node.launch
 #### insert cable modeling (servoing) (insert to tube 1)
-##### (rosrun nist modeling_cable_nist_insert)
+##### rosrun nist modeling_cable_nist_insert
 #### insert cable modeling (servoing) (insert to final holder)
 ##### rosrun nist modeling_cable_nist_insert_final_holder
 #### run trajopt - go the start position
-##### (rosrun nist nist_start __ns:=my_gen3)
+##### rosrun nist nist_start __ns:=my_gen3
 #### run color detection node - kinova camera
-##### (rosrun nist color_detection_blue_kinova_node)
+##### rosrun nist color_detection_blue_kinova_node
 #### run modeling cable node for pushing cable
-##### (rosrun nist modeling_cable_gen3_nist_node)
+##### rosrun nist modeling_cable_gen3_nist_node
 #### run yolo detection to detect the board and tubes
-##### (roslaunch darknet_ros darknet_ros_NIST_board.launch)
+##### roslaunch darknet_ros darknet_ros_NIST_board.launch
 #### run yolo detection to detect the cable
-##### (roslaunch darknet_ros darknet_ros_NIST_cable.launch)
+##### roslaunch darknet_ros darknet_ros_NIST_cable.launch
 #### run plane detection to detect the board plane
-##### (rosrun nist plane_segmentation)
+##### rosrun nist plane_segmentation
 #### run trajopt - run the task
-##### (rosrun nist nist_run __ns:=my_gen3)
+##### rosrun nist nist_run __ns:=my_gen3
 
 ## Copyright: 
 ### This work was developed at the [RIVeR Lab, Northeastern University](http://robot.neu.edu/) 
