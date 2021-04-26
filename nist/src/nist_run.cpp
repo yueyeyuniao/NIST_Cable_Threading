@@ -379,17 +379,6 @@ class nist_task
 		      orientation(0.499, 0.500, 0.500, 0.501); // w x y z
 		      Eigen::Vector3d(0.456, 0.02, 0.434);
 		    */
-			// start postion of part 3
-			// rostopic echo /my_gen3/rviz_moveit_motion_planning_display/robot_interaction_interactive_marker_topic/update
-			// position: 
-			// x: 0.343422460792
-			// y: 0.00134346334286
-			// z: 0.343825302969
-			// orientation: 
-			// x: 0.999054092944
-			// y: 0.0260039666881
-			// z: 0.0348388842375
-			// w: 0.000982462666346
 
 			geometry_msgs::Pose pose;
 			pose.position.x = 0.478;
@@ -404,16 +393,8 @@ class nist_task
 			Motion(pose,0.8);
 		}
 
-		void GoToInit_tube1_tube2()
-		{	// old
-			// geometry_msgs::Pose pose;
-			// pose.position.x = 0.382;
-			// pose.position.y = -0.047;
-			// pose.position.z = 0.400;
-			// pose.orientation.x = 0.698;
-			// pose.orientation.y = 0.668;
-			// pose.orientation.z = 0.187;
-			// pose.orientation.w = 0.180;
+		void GoToInit_tube1_tube2()  // pose between tube 1 and tube 2. here simplified h-coding
+		{	
 
 			geometry_msgs::Pose pose;
 			pose.position.x = 0.387;
@@ -426,7 +407,7 @@ class nist_task
 			Motion(pose,0.8);
 		}
 
-		void GoToPre_tube1_tube2()
+		void GoToPre_tube1_tube2()  // pose between tube 1 and tube 2. here simplified h-coding
 		{
 			geometry_msgs::Pose pose;
 			pose.position.x = 0.350;
@@ -436,54 +417,81 @@ class nist_task
 			pose.orientation.y = 0.703;
 			pose.orientation.z = 0.098;
 			pose.orientation.w = 0.095;
-
 			Motion(pose,0.5);
 		}
 
-		void GoToReady_tube1_tube2_1()
+		void GoToReady_tube1_tube2_1() // grasp with cable model
 		{
+			tf::StampedTransform transform;
+			// get the info from the service
+			double grasp_x,grasp_y,grasp_z, grasp_theta;
+			double tip_x, tip_y, tip_z, tip_theta;
+			srv_cable_plane.request.region = 1;
+			if (cable_2d_client.call(srv_cable_plane))
+			{
+				ROS_INFO("Successed to call cable plane model service");
+			}
+			else
+			{
+				ROS_ERROR("Failed to call cable plane model service");
+				exit(1);
+			}
+			grasp_x = srv_cable_plane.response.grasp_x;
+			grasp_y = srv_cable_plane.response.grasp_y;
+			grasp_z = srv_cable_plane.response.grasp_z;
+			grasp_theta = srv_cable_plane.response.grasp_theta;
+			tip_x = srv_cable_plane.response.tip_x;
+			tip_y = srv_cable_plane.response.tip_y;
+			tip_z = srv_cable_plane.response.tip_z;
+			tip_theta = srv_cable_plane.response.tip_theta;
+
+			try{
+		          listener_.waitForTransform("base_link", "end_effector",ros::Time(0), ros::Duration(3.0));
+		          listener_.lookupTransform("base_link", "end_effector",ros::Time(0), transform);
+			}
+			catch (tf::TransformException ex) {
+			  ROS_ERROR("%s",ex.what());
+			}
+
 			geometry_msgs::Pose pose;
-			pose.position.x = 0.351;
-			pose.position.y = 0.038;
-			pose.position.z = 0.219;
-			pose.orientation.x = 0.673;
-			pose.orientation.y = 0.678;
-			pose.orientation.z = 0.212;
-			pose.orientation.w = 0.208;
+			pose.position.x = grasp_x;
+			pose.position.y = grasp_y;
+			pose.position.z = grasp_z;
+			pose.orientation.x = transform.getRotation().x();
+			pose.orientation.y = transform.getRotation().y();
+			pose.orientation.z = transform.getRotation().z();
+			pose.orientation.w = transform.getRotation().w();
 
 			Motion(pose,0.5);
+
 		}
 
-		void GoToReady_tube1_tube2_2()
+		void GoToReady_tube1_tube2_2() // plan to the next tube
 		{
-			geometry_msgs::Pose pose;
-			pose.position.x = 0.428;
-			pose.position.y = 0.044;
-			pose.position.z = 0.248;
-			pose.orientation.x = 0.702;
-			pose.orientation.y = 0.707;
-			pose.orientation.z = 0.062;
-			pose.orientation.w = 0.059;
+			// insert to the tube 2
+			tf::StampedTransform transform_base_t2;
+			geometry_msgs::Pose pose_target;
+			try{
+				listener_.waitForTransform("base_link", "thick_tube2", ros::Time(0), ros::Duration(3.0));
+				listener_.lookupTransform("base_link", "thick_tube2", ros::Time(0), transform_base_t2);
+			}
+			catch (tf::TransformException ex) {
+				ROS_ERROR("%s", ex.what());
+			}
 
-			Motion(pose,0.5);			
+			pose_target.position.x = transform_base_t2.getOrigin().x();
+			pose_target.position.y = transform_base_t2.getOrigin().y() - 0.024;
+			pose_target.position.z = transform_base_t2.getOrigin().z();
+			pose_target.orientation.x = transform_base_t2.getRotation().x();
+			pose_target.orientation.y = transform_base_t2.getRotation().y();
+			pose_target.orientation.z = transform_base_t2.getRotation().z();
+			pose_target.orientation.w = transform_base_t2.getRotation().w();
+			Motion(pose_target, 0.5);
+				
 		}
 
-		// very close to limit (better use 1 and 2 above)
-		// void GoToReady_tube1_tube2_final()
-		// {
-		// 	geometry_msgs::Pose pose;
-		// 	pose.position.x = 0.434;
-		// 	pose.position.y = 0.039;
-		// 	pose.position.z = 0.250;
-		// 	pose.orientation.x = 0.694;
-		// 	pose.orientation.y = 0.717;
-		// 	pose.orientation.z = 0.055;
-		// 	pose.orientation.w = 0.037;
 
-		// 	Motion(pose,0.5);			
-		// }
-
-		void GoToPushPosition()
+		void GoToPushPosition()  // it is calculated by tube positions, h-coding here
 
 		{
 			geometry_msgs::Pose pose;
@@ -499,23 +507,8 @@ class nist_task
 			Motion(pose,0.8);
 		}
 
-		// void GoToPushPosition_2()
 
-		// {
-		// 	geometry_msgs::Pose pose;
-		// 	pose.position.x = 0.513;
-		// 	pose.position.y = 0.139;
-		// 	pose.position.z = 0.406;
-		// 	pose.orientation.x = 0.993;
-		// 	pose.orientation.y = -0.039;
-		// 	pose.orientation.z = 0.011;
-		// 	pose.orientation.w = -0.113;
-
-		// 	// move the arm
-		// 	Motion(pose,0.8);
-		// }
-
-		void GoToViewPosition()
+		void GoToViewPosition()  // it is calculated by tube positions, h-coding here
 
 		{
 			geometry_msgs::Pose pose;
@@ -660,23 +653,23 @@ class nist_task
 			GoToInitPosition();
 			Gripper(0.77);
 			geometry_msgs::Pose pose_target;
-			pose_target.position.x = 0.334;
-			pose_target.position.y = 0.216;
-			pose_target.position.z = 0.350;
-			pose_target.orientation.x = 1.000;
-			pose_target.orientation.y = 0.017;
-			pose_target.orientation.z = 0.011;
-			pose_target.orientation.w = 0.007;
+			pose_target.position.x = nudge_x_1;
+			pose_target.position.y = nudge_y_1;
+			pose_target.position.z = nudge_z_1;
+			pose_target.orientation.x = nudge_o_x_1;
+			pose_target.orientation.y = nudge_o_y_1;
+			pose_target.orientation.z = nudge_o_z_1;
+			pose_target.orientation.w = nudge_o_w_1;
 			Motion(pose_target,0.5);
 			ros::Duration(1.0).sleep();
 
-			pose_target.position.x = 0.555;
-			pose_target.position.y = 0.211;
-			pose_target.position.z = 0.358;
-			pose_target.orientation.x = 1.000;
-			pose_target.orientation.y = 0.017;
-			pose_target.orientation.z = 0.011;
-			pose_target.orientation.w = 0.007;
+			pose_target.position.x = nudge_x_2;
+			pose_target.position.y = nudge_y_2;
+			pose_target.position.z = nudge_z_2;
+			pose_target.orientation.x = nudge_o_x_2;
+			pose_target.orientation.y = nudge_o_y_2;
+			pose_target.orientation.z = nudge_o_z_2;
+			pose_target.orientation.w = nudge_o_w_2;
 			Motion(pose_target,0.8);
 			ros::Duration(1.0).sleep();
 		}
@@ -939,41 +932,43 @@ class nist_task
 
 		}
 
+
+
 		// region 1
 		void tube3_pre()
 		{	
 
-			// GoToViewPosition();
-			// ros::Duration(4.0).sleep();
+			GoToViewPosition();
+			ros::Duration(4.0).sleep();
 
 
-			// // for finger safety, move the cable position for grasp
-			// Gripper(0.77);
-			// ros::Duration(1.0).sleep();
+			// for finger safety, move the cable position for grasp
+			Gripper(0.77);
+			ros::Duration(1.0).sleep();
 
 			geometry_msgs::Pose pose_target;
 
-			// pose_target.position.x = 0.421;
-			// pose_target.position.y = 0.088;
-			// pose_target.position.z = 0.241;
-			// pose_target.orientation.x = 0.921;
-			// pose_target.orientation.y = 0.390;
-			// pose_target.orientation.z = -0.005;
-			// pose_target.orientation.w = 0.007;
+			pose_target.position.x = sp_x_1;
+			pose_target.position.y = sp_y_1;
+			pose_target.position.z = sp_z_1;
+			pose_target.orientation.x = sp_x_o_1;
+			pose_target.orientation.y = sp_y_o_1;
+			pose_target.orientation.z = sp_z_o_1;
+			pose_target.orientation.w = sp_w_o_1;
 
-			// Motion(pose_target,0.8);
-			// ros::Duration(2.0).sleep();
+			Motion(pose_target,0.8);
+			ros::Duration(2.0).sleep();
 
-			// pose_target.position.x = 0.379;
-			// pose_target.position.y = 0.045;
-			// pose_target.position.z = 0.241;
-			// pose_target.orientation.x = 0.921;
-			// pose_target.orientation.y = 0.390;
-			// pose_target.orientation.z = 0.002;
-			// pose_target.orientation.w = 0.006;
+			pose_target.position.x = sp_x_2;
+			pose_target.position.y = sp_y_2;
+			pose_target.position.z = sp_z_2;
+			pose_target.orientation.x = sp_x_o_2;
+			pose_target.orientation.y = sp_y_o_2;
+			pose_target.orientation.z = sp_z_o_2;
+			pose_target.orientation.w = sp_w_o_2;
 
-			// Motion(pose_target,0.8);
-			// ros::Duration(2.0).sleep();
+			Motion(pose_target,0.8);
+			ros::Duration(2.0).sleep();
 
 			GoToViewPosition();
 			ros::Duration(5.0).sleep();
@@ -1127,107 +1122,16 @@ class nist_task
 			Gripper(0.77);
 			ros::Duration(1.0).sleep();
 
-			// // rotate the cable 
-			// pose_target.position.x = 0.390;
-			// pose_target.position.y = 0.048;
-			// pose_target.position.z = 0.248;
-			// pose_target.orientation.x = 0.010;
-			// pose_target.orientation.y = 1.000;
-			// pose_target.orientation.z = -0.004;
-			// pose_target.orientation.w = 0.004;
-			// Motion(pose_target,0.8);
-			// ros::Duration(4.0).sleep();
-
-			// // insert to the tube 3
-			// try{
-			// 	listener_.waitForTransform("base_link", "end_effector", ros::Time(0), ros::Duration(3.0));
-			// 	listener_.lookupTransform("base_link", "end_effector", ros::Time(0), transform_base_ee);
-			// }
-			// catch (tf::TransformException ex) {
-			// 	ROS_ERROR("%s", ex.what());
-			// }
-
-			// pose_target.position.x = transform_base_ee.getOrigin().x();
-			// pose_target.position.y = transform_base_ee.getOrigin().y() + 0.022;
-			// pose_target.position.z = transform_base_ee.getOrigin().z();
-			// pose_target.orientation.x = transform_base_ee.getRotation().x();
-			// pose_target.orientation.y = transform_base_ee.getRotation().y();
-			// pose_target.orientation.z = transform_base_ee.getRotation().z();
-			// pose_target.orientation.w = transform_base_ee.getRotation().w();
-			// Motion(pose_target, 0.5);
-			// ros::Duration(3.0).sleep();
-			// Gripper(0.6);
-			// ros::Duration(1.0).sleep();
-
-			// try{
-			// 	listener_.waitForTransform("base_link", "end_effector", ros::Time(0), ros::Duration(3.0));
-			// 	listener_.lookupTransform("base_link", "end_effector", ros::Time(0), transform_base_ee);
-			// }
-			// catch (tf::TransformException ex) {
-			// 	ROS_ERROR("%s", ex.what());
-			// }
-
-			// pose_target.position.x = transform_base_ee.getOrigin().x();
-			// pose_target.position.y = transform_base_ee.getOrigin().y();
-			// pose_target.position.z = transform_base_ee.getOrigin().z()+0.1;
-			// pose_target.orientation.x = transform_base_ee.getRotation().x();
-			// pose_target.orientation.y = transform_base_ee.getRotation().y();
-			// pose_target.orientation.z = transform_base_ee.getRotation().z();
-			// pose_target.orientation.w = transform_base_ee.getRotation().w();
-			// Motion(pose_target, 0.8);
-			// ros::Duration(3.0).sleep();
-
-
-			// // go to init position
-			// GoToInit_tube1_tube2();
-			// ros::Duration(5.0).sleep();
-
-/*	some hard coding, ignore		
-			// pre-grasp
-			pose_target.position.x = 0.394;
-			pose_target.position.y = 0.058;
-			pose_target.position.z = 0.298;
-			pose_target.orientation.x = -0.532;
-			pose_target.orientation.y = 0.847;
-			pose_target.orientation.z = 0.003;
-			pose_target.orientation.w = 0.010;
-
-			Motion(pose_target,0.8);
-			ros::Duration(2.0).sleep();
-
-			// go and grasp
-			pose_target.position.x = 0.392;
-			pose_target.position.y = 0.057;
-			pose_target.position.z = 0.238;
-			pose_target.orientation.x = -0.532;
-			pose_target.orientation.y = 0.847;
-			pose_target.orientation.z = 0.003;
-			pose_target.orientation.w = 0.010;
-
-			Motion(pose_target,0.6);
-			ros::Duration(3.0).sleep();
-			Gripper(0.77);
-			ros::Duration(0.5).sleep();
-
-			// move/rotate the tip to the front of the tube 3
-			
-			// pose_target.position.x = transform_base_Nee.getOrigin().x();
-			// pose_target.position.y = transform_base_Nee.getOrigin().y();
-			// pose_target.position.z = transform_base_Nee.getOrigin().z()+0.215;
-			// pose_target.orientation.x = transform_base_Nee.getRotation().x();
-			// pose_target.orientation.y = transform_base_Nee.getRotation().y();
-			// pose_target.orientation.z = transform_base_Nee.getRotation().z();
-			// pose_target.orientation.w = transform_base_Nee.getRotation().w();
-
+			// rotate the cable 
 			pose_target.position.x = 0.390;
-			pose_target.position.y = 0.042;
-			pose_target.position.z = 0.250;
-			pose_target.orientation.x = 0.135;
-			pose_target.orientation.y = 0.991;
-			pose_target.orientation.z = 0.009;
-			pose_target.orientation.w = 0.006;
-			Motion(pose_target,0.5);
-			ros::Duration(2.0).sleep();
+			pose_target.position.y = 0.048;
+			pose_target.position.z = 0.248;
+			pose_target.orientation.x = 0.010;
+			pose_target.orientation.y = 1.000;
+			pose_target.orientation.z = -0.004;
+			pose_target.orientation.w = 0.004;
+			Motion(pose_target,0.8);
+			ros::Duration(4.0).sleep();
 
 			// insert to the tube 3
 			try{
@@ -1239,7 +1143,7 @@ class nist_task
 			}
 
 			pose_target.position.x = transform_base_ee.getOrigin().x();
-			pose_target.position.y = transform_base_ee.getOrigin().y() + 0.023;
+			pose_target.position.y = transform_base_ee.getOrigin().y() + 0.022;
 			pose_target.position.z = transform_base_ee.getOrigin().z();
 			pose_target.orientation.x = transform_base_ee.getRotation().x();
 			pose_target.orientation.y = transform_base_ee.getRotation().y();
@@ -1250,23 +1154,29 @@ class nist_task
 			Gripper(0.6);
 			ros::Duration(1.0).sleep();
 
-			// go to pre-grasp
-			pose_target.position.x = 0.394;
-			pose_target.position.y = 0.058;
-			pose_target.position.z = 0.298;
-			pose_target.orientation.x = -0.532;
-			pose_target.orientation.y = 0.847;
-			pose_target.orientation.z = 0.003;
-			pose_target.orientation.w = 0.010;
+			try{
+				listener_.waitForTransform("base_link", "end_effector", ros::Time(0), ros::Duration(3.0));
+				listener_.lookupTransform("base_link", "end_effector", ros::Time(0), transform_base_ee);
+			}
+			catch (tf::TransformException ex) {
+				ROS_ERROR("%s", ex.what());
+			}
 
-			Motion(pose_target,0.5);
-			ros::Duration(2.0).sleep();
-
-			// go to view position
-			GoToViewPosition();
+			pose_target.position.x = transform_base_ee.getOrigin().x();
+			pose_target.position.y = transform_base_ee.getOrigin().y();
+			pose_target.position.z = transform_base_ee.getOrigin().z()+0.1;
+			pose_target.orientation.x = transform_base_ee.getRotation().x();
+			pose_target.orientation.y = transform_base_ee.getRotation().y();
+			pose_target.orientation.z = transform_base_ee.getRotation().z();
+			pose_target.orientation.w = transform_base_ee.getRotation().w();
+			Motion(pose_target, 0.8);
 			ros::Duration(3.0).sleep();
 
-*/
+
+			// go to init position
+			GoToInit_tube1_tube2();
+			ros::Duration(5.0).sleep();
+
 		}
 
 		void tube3_ing()
@@ -1333,41 +1243,36 @@ class nist_task
 			ros::Duration(1.0).sleep();
 
 			// use external force to stop stretching the cable
-			// while (external_force_y < 10)
-			// {
-			// 	gen3_velocity_control(0.00, 0.01, 0.00, 0.00, 0.00, 0.00);
+			while (external_force_y < 10)
+			{
+				gen3_velocity_control(0.00, 0.01, 0.00, 0.00, 0.00, 0.00);
+			}
+
+			gen3_velocity_control(0.00, 0.00, 0.00, 0.00, 0.00, 0.00);
+
+
+			// // pull and tight the cable (pull about 23cm to the left)
+			// try{
+			// 	listener_.waitForTransform("base_link", "end_effector", ros::Time(0), ros::Duration(3.0));
+			// 	listener_.lookupTransform("base_link", "end_effector", ros::Time(0), transform_base_ee);
+			// }
+			// catch (tf::TransformException ex) {
+			// 	ROS_ERROR("%s", ex.what());
 			// }
 
-			// gen3_velocity_control(0.00, 0.00, 0.00, 0.00, 0.00, 0.00);
+			// pose_target.position.x = transform_base_ee.getOrigin().x();
+			// pose_target.position.y = transform_base_ee.getOrigin().y() + 0.20;
+			// pose_target.position.z = transform_base_ee.getOrigin().z() + 0.01;
+			// pose_target.orientation.x = transform_base_ee.getRotation().x();
+			// pose_target.orientation.y = transform_base_ee.getRotation().y();
+			// pose_target.orientation.z = transform_base_ee.getRotation().z();
+			// pose_target.orientation.w = transform_base_ee.getRotation().w();
+			// Motion(pose_target, 0.8);
+			// ros::Duration(3.0).sleep();
+			// Gripper(0.3);
+			// ros::Duration(1.0).sleep();
 
 
-			// pull and tight the cable (pull about 23cm to the left)
-			try{
-				listener_.waitForTransform("base_link", "end_effector", ros::Time(0), ros::Duration(3.0));
-				listener_.lookupTransform("base_link", "end_effector", ros::Time(0), transform_base_ee);
-			}
-			catch (tf::TransformException ex) {
-				ROS_ERROR("%s", ex.what());
-			}
-
-			pose_target.position.x = transform_base_ee.getOrigin().x();
-			pose_target.position.y = transform_base_ee.getOrigin().y() + 0.20;
-			pose_target.position.z = transform_base_ee.getOrigin().z() + 0.01;
-			pose_target.orientation.x = transform_base_ee.getRotation().x();
-			pose_target.orientation.y = transform_base_ee.getRotation().y();
-			pose_target.orientation.z = transform_base_ee.getRotation().z();
-			pose_target.orientation.w = transform_base_ee.getRotation().w();
-			Motion(pose_target, 0.8);
-			ros::Duration(3.0).sleep();
-			Gripper(0.3);
-			ros::Duration(1.0).sleep();
-
-
-
-		}
-
-		void insert_final()
-		{
 
 		}
 
@@ -1403,11 +1308,19 @@ class nist_task
 
 	    //pid
 	    float _dt = 0.1;
-	    float _Kp;      // 2
-	    float _Kd;    // 0.2
-	    float _Ki;    
+	    float _Kp; 
+	    float _Kd;
+	    float _Ki; 
 	    float _pre_error_x=0, _pre_error_y=0, _pre_error_z=0, _pre_error_roll=0, _pre_error_pitch=0, _pre_error_yaw=0;
 	    float _integral_x=0, _integral_y=0, _integral_z=0, _integral_roll=0, _integral_pitch=0, _integral_yaw=0;
+
+	    double nudge_x_1=0.334, nudge_y_1=0.216, nudge_z_1=0.350, nudge_o_x_1=1.000, nudge_o_y_1=0.017, nudge_o_z_1=0.011, nudge_o_w_1=0.007;
+	    double nudge_x_2=0.555, nudge_y_2=0.211, nudge_z_2=0.358, nudge_o_x_2=1.000, nudge_o_y_2=0.017, nudge_o_z_2=0.011, nudge_o_w_2=0.007;
+
+	    double sp_x_1=0.421, sp_y_1=0.088, sp_z_1=0.241, sp_x_o_1=0.921, sp_y_o_1=0.390, sp_z_o_1=-0.005, sp_w_o_1=0.007;
+	    double sp_x_2=0.379, sp_y_2=0.045, sp_z_2=0.241, sp_x_o_2=0.921, sp_y_o_2=0.390, sp_z_o_2=0.002, sp_w_o_2=0.006;
+
+
 };
 
 
@@ -1418,33 +1331,30 @@ int main(int argc, char **argv)
 	nist_task nist_cool;
 
 	
-	// // insert the cable and release the cable
-	// nist_cool.Insert_visual_servoing("thick_tube1_pre");
-	// nist_cool.Insert();
-	// nist_cool.Gripper(0.0);
-	// ros::Duration(1.0).sleep();
+	// insert the cable and release the cable
+	nist_cool.Insert_visual_servoing("thick_tube1_pre");
+	nist_cool.Insert();
+	nist_cool.Gripper(0.0);
+	ros::Duration(1.0).sleep();
 
-	// // push side of the cable to make the cable easy to grasp
-	// nist_cool.tube1_tube2_pre();	
+	// push side of the cable to make the cable easy to grasp
+	nist_cool.tube1_tube2_pre();	
 
-	// // insert the cable from tube1 to tube2
-	// nist_cool.tube1_tube2_new();
+	// insert the cable from tube1 to tube2
+	nist_cool.tube1_tube2_new();
 	
 
-	// // go to the push position and push the cable out of tube 2
-	// nist_cool.tube2_tube3(); // push until length greater than 0.25
-	// // nist_cool.push_once(13,2);
-	// // nist_cool.GoToPushPosition();
-	// // nist_cool.GoToViewPosition();
+	// go to the push position and push the cable out of tube 2
+	nist_cool.tube2_tube3(); // push until length greater than 0.25
 
 	// // into tube 3
 	nist_cool.tube3_pre();
 
-	// // pushing through tube 3
-	// nist_cool.tube3_ing();
+	// pushing through tube 3
+	nist_cool.tube3_ing();
 
-	// // after tube 3, go to ready insert to final position
-	// nist_cool.tube3_post();
+	// after tube 3, go to ready insert to final position
+	nist_cool.tube3_post();
 	
 	return 0;
 }
