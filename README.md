@@ -3,7 +3,7 @@
 ## [Video link](https://drive.google.com/file/d/1_ROtOzjHuf5BDvUOtFnqb7buURaLELdB/view?usp=sharing)
 
 ## System overview:
-![alt-text](https://github.com/yueyeyuniao/DRC_Plug_Task_Jaco_v2/blob/master/figures/workspace.png)<br/>
+![alt-text](https://github.com/yueyeyuniao/NIST_Cable_Threading/blob/main/media/workspace_annotated.PNG)<br/>
 
 
 ## System requirement:
@@ -19,8 +19,10 @@
 #### Kinova gen3 arm mounted with RGBD camera
 
 ## Introduction:
-#### /launch folder includes a launch file for launching the robot, launching the Realsense camera, launching the Kinect camera, and launching the YOLO object detection
-#### /src folder includes all the source codes
+#### /darknet_ros folder includes all the configurates and weights for tube and cable detection
+#### /nist folder includes all the launch file, source codes, and service files
+#### /research folder includes all the configuration and launch files for integrating Trajopt with Gen3 arm
+#### /trajopt_ros folder includes the trajopt (optimized motion planner) in ROS
 
 ## Copyright: 
 ### This work was developed at the [RIVeR Lab, Northeastern University](http://robot.neu.edu/) 
