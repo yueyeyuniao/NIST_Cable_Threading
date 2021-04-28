@@ -25,27 +25,27 @@
 #### /trajopt_ros folder includes the trajopt (optimized motion planner) in ROS
 
 ## Commands
-#### launch robot and camera
+#### --launch robot and camera
 ##### roslaunch nist nist.launch
-#### launch trajopt service node
+#### --launch trajopt service node
 ##### roslaunch research gen3_trajopt_node.launch
-#### insert cable modeling (servoing) (insert to tube 1)
+#### --insert cable modeling (servoing) (insert to tube 1)
 ##### rosrun nist modeling_cable_nist_insert
-#### insert cable modeling (servoing) (insert to final holder)
+#### --insert cable modeling (servoing) (insert to final holder)
 ##### rosrun nist modeling_cable_nist_insert_final_holder
-#### run trajopt - go the start position
+#### --run trajopt - go the start position
 ##### rosrun nist nist_start __ns:=my_gen3
-#### run color detection node - kinova camera
+#### --run color detection node - kinova camera
 ##### rosrun nist color_detection_blue_kinova_node
-#### run modeling cable node for pushing cable
+#### --run modeling cable node for pushing cable
 ##### rosrun nist modeling_cable_gen3_nist_node
-#### run yolo detection to detect the board and tubes
+#### --run yolo detection to detect the board and tubes
 ##### roslaunch darknet_ros darknet_ros_NIST_board.launch
-#### run yolo detection to detect the cable
+#### --run yolo detection to detect the cable
 ##### roslaunch darknet_ros darknet_ros_NIST_cable.launch
-#### run plane detection to detect the board plane
+#### --run plane detection to detect the board plane
 ##### rosrun nist plane_segmentation
-#### run trajopt - run the task
+#### --run trajopt - run the task
 ##### rosrun nist nist_run __ns:=my_gen3
 
 ## Copyright: 
