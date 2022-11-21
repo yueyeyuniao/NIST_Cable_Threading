@@ -1,5 +1,5 @@
-# Benchmarking Autonomous Manipulation of Deformable Linear Objects in Constrained Spaces (RAL 2021) [under review]
-## [Paper link](https://drive.google.com/file/d/18-0WE0f70hS8QTbjbHv9Cg_iiWI2REK8/view?usp=sharing)
+# Manipulation of Deformable Linear Objects in Benchmark Task Spaces (IEEE CASE 2022)
+## [Paper link](https://ieeexplore.ieee.org/abstract/document/9926677)
 ## [Video link](https://drive.google.com/file/d/1_ROtOzjHuf5BDvUOtFnqb7buURaLELdB/view?usp=sharing)
 
 ## System overview:
